@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 public class TaskService
 {
-    private List<TaskItem> tasks = new List<TaskItem>();
+    private readonly ITaskRepository repository;
     private int nextId = 1;
 
-    //OP Makgopela - Add Task method
+    public TaskService(ITaskRepository repository)
+    {
+        this.repository = repository;
+    }
+
     public void AddTask(string title, string description, DateTime dueDate, string priority)
     {
         var task = new TaskItem
@@ -19,43 +19,41 @@ public class TaskService
             Priority = priority,
             IsCompleted = false
         };
-        tasks.Add(task);
+        repository.Add(task);
     }
 
-    //OP Makgopela - Update Task method
     public void UpdateTask(int id, string title, string description, DateTime dueDate, string priority)
     {
-        var task = tasks.FirstOrDefault(t => t.Id == id);
+        var task = repository.GetById(id);
         if (task != null)
         {
             task.Title = title;
             task.Description = description;
             task.DueDate = dueDate;
             task.Priority = priority;
+            repository.Update(task);
         }
     }
 
-    //OP Makgopela - Delete Task method
     public void DeleteTask(int id)
     {
-        tasks.RemoveAll(t => t.Id == id);
+        repository.Delete(id);
     }
 
-    //OP Makgopela - Mark task Method
     public void MarkTaskAsCompleted(int id)
     {
-        var task = tasks.FirstOrDefault(t => t.Id == id);
+        var task = repository.GetById(id);
         if (task != null)
         {
             task.MarkAsCompleted();
+            repository.Update(task);
         }
     }
 
-    //OP Makgopela - Filtering method
     public List<TaskItem> GetTasks(bool? completed = null)
     {
-        if (completed == null)
-            return tasks;
+        var tasks = repository.GetAll();
+        if (completed == null) return tasks;
         return tasks.Where(t => t.IsCompleted == completed.Value).ToList();
     }
 }

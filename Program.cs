@@ -4,7 +4,8 @@ class Program
 {
     static void Main(string[] args)
     {
-        TaskService taskService = new TaskService();
+        ITaskRepository taskRepo = new InMemoryTaskRepository();
+        TaskService taskService = new TaskService(taskRepo);
         bool running = true;
 
         // OP Makgopela - Menu Loop
