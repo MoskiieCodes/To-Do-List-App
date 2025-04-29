@@ -7,7 +7,7 @@ class Program
         TaskService taskService = new TaskService();
         bool running = true;
 
-        //OP Makgopela - Menu Loop
+        // OP Makgopela - Menu Loop
         while (running)
         {
             Console.WriteLine("\nMenu:");
@@ -21,75 +21,106 @@ class Program
             Console.WriteLine("0. Exit");
             Console.Write("Choose an option: ");
 
-            string choice = Console.ReadLine();
+            string? choice = Console.ReadLine();
 
             switch (choice)
-            {  //OP Makgopela - Adding Tasks
+            {
+                // OP Makgopela - Adding Tasks
                 case "1":
                     Console.Write("Title: ");
-                    string title = Console.ReadLine();
+                    string? titleInput = Console.ReadLine();
+                    string title = titleInput ?? string.Empty;
+
                     Console.Write("Description: ");
-                    string desc = Console.ReadLine();
+                    string? descInput = Console.ReadLine();
+                    string description = descInput ?? string.Empty;
+
                     Console.Write("Due Date (yyyy-mm-dd): ");
-                    DateTime due = DateTime.Parse(Console.ReadLine());
+                    string? dueInput = Console.ReadLine();
+                    DateTime dueDate = DateTime.TryParse(dueInput, out var parsedDue)
+                        ? parsedDue
+                        : DateTime.Now;
+
                     Console.Write("Priority: ");
-                    string priority = Console.ReadLine();
-                    taskService.AddTask(title, desc, due, priority);
+                    string? priorityInput = Console.ReadLine();
+                    string priority = priorityInput ?? "Normal";
+
+                    taskService.AddTask(title, description, dueDate, priority);
                     break;
 
-                //OP Makgopela - Updating Tasks
+                // OP Makgopela - Updating Tasks
                 case "2":
                     Console.Write("Task Id to Update: ");
-                    int updateId = int.Parse(Console.ReadLine());
+                    string? updateIdInput = Console.ReadLine();
+                    int updateId = int.TryParse(updateIdInput, out var parsedUpdateId)
+                        ? parsedUpdateId
+                        : -1;
+
                     Console.Write("New Title: ");
-                    title = Console.ReadLine();
+                    titleInput = Console.ReadLine();
+                    title = titleInput ?? string.Empty;
+
                     Console.Write("New Description: ");
-                    desc = Console.ReadLine();
+                    descInput = Console.ReadLine();
+                    description = descInput ?? string.Empty;
+
                     Console.Write("New Due Date (yyyy-mm-dd): ");
-                    due = DateTime.Parse(Console.ReadLine());
+                    dueInput = Console.ReadLine();
+                    dueDate = DateTime.TryParse(dueInput, out parsedDue)
+                        ? parsedDue
+                        : DateTime.Now;
+
                     Console.Write("New Priority: ");
-                    priority = Console.ReadLine();
-                    taskService.UpdateTask(updateId, title, desc, due, priority);
+                    priorityInput = Console.ReadLine();
+                    priority = priorityInput ?? "Normal";
+
+                    taskService.UpdateTask(updateId, title, description, dueDate, priority);
                     break;
 
-                //OP Makgopela - Deleting Tasks
+                // OP Makgopela - Deleting Tasks
                 case "3":
                     Console.Write("Task Id to Delete: ");
-                    int deleteId = int.Parse(Console.ReadLine());
+                    string? deleteInput = Console.ReadLine();
+                    int deleteId = int.TryParse(deleteInput, out var parsedDeleteId)
+                        ? parsedDeleteId
+                        : -1;
                     taskService.DeleteTask(deleteId);
                     break;
 
-                //OP Makgopela - Marking a Task
+                // OP Makgopela - Marking a Task
                 case "4":
                     Console.Write("Task Id to Mark Complete: ");
-                    int completeId = int.Parse(Console.ReadLine());
+                    string? completeInput = Console.ReadLine();
+                    int completeId = int.TryParse(completeInput, out var parsedCompleteId)
+                        ? parsedCompleteId
+                        : -1;
                     taskService.MarkTaskAsCompleted(completeId);
                     break;
 
-                //OP Makgopela - Lists All Tasks
+                // OP Makgopela - Lists All Tasks
                 case "5":
                     foreach (var task in taskService.GetTasks())
                         PrintTask(task);
                     break;
 
-                //OP Makgopela - Lists Pending Tasks
+                // OP Makgopela - Lists Pending Tasks
                 case "6":
                     foreach (var task in taskService.GetTasks(false))
                         PrintTask(task);
                     break;
 
-                //OP Makgopela - Lists Completed Tasks
+                // OP Makgopela - Lists Completed Tasks
                 case "7":
                     foreach (var task in taskService.GetTasks(true))
                         PrintTask(task);
                     break;
 
-                //OP Makgopela - Exits Program
+                // OP Makgopela - Exits Program
                 case "0":
                     running = false;
                     break;
 
-                //OP Makgopela - Invalid option error message
+                // OP Makgopela - Invalid option error message
                 default:
                     Console.WriteLine("Invalid option.");
                     break;
